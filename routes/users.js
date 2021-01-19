@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
 
 // Login Page
 router.get('/login', (req,res) => res.send('Login page')) 

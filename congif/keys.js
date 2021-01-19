@@ -1,3 +1,4 @@
 module.exports = {
-    MongoURI: 'mongodb+srv://<username>:MongoDB2018@cluster0.m433z.mongodb.net/<dbname>?retryWrites=true&w=majority' // verifier le mot de passe
+    MongoURI: 'mongodb+srv://AdminMongoDB:AdminMongoDB2018@cluster0.m433z.mongodb.net/Cluster0?retryWrites=true&w=majority'  
+
 }

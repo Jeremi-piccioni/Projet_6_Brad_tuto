@@ -1,7 +1,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const app =express()
+
+// Allow CORS policy
+app.use(cors())
 
 // DB Config
 const db = require('./congif/keys').MongoURI
@@ -17,7 +21,7 @@ app.use(bodyParser.json())
 
 // Routes
 app.use('/', require('./routes/index'))
-app.use('/api/auth', require('./routes/users'))
+app.use('/api/auth', require('./routes/users')) 
 
 const PORT = process.env.PORT ||3000
 

@@ -3,17 +3,18 @@ const router = express.Router()
 const mongoose = require('mongoose')
 
 // Login Page
-router.get('/login', (req,res) => res.send('Login page')) 
+router.get('/signup', (req,res) => res.send('Login page')) 
 
 module.exports = router
 
 // Register Page
-router.get('/register', (req,res) => res.send('Register page')) 
+router.get('/login', (req,res) => res.send('Register page')) 
 
 // Register Handle
-router.post('/register', (req,res) => {
+router.post('/signup', (req,res) => {
+    
     console.log(req.body)
-    res.send('hello')
+    res.send('hello!!')
 })
 
 module.exports = router

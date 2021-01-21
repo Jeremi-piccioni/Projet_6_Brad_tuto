@@ -3,7 +3,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 
 // User model
-//const User = require('../models/User')   // This line crash the server... but why ??
+const User = require('../models/User')   // This line crash the server... but why ??
 
 // Login Page
 router.get('/signup', (req,res) => res.send('Login page'))  // api/auth
@@ -24,11 +24,11 @@ if(!email || !password) {
     errors.push( {message: 'Please fill all fields'} )
     }
 // Check pass lengh 
-if(password.lengh < 6){
+if(password.length < 6){
     errors.push( {message:'Password should be at least 6 characters'} )
     }
 
-if(errors.lengh > 0) {
+if(errors.length > 0) {
     console.log(errors)
     req.send(errors)
 

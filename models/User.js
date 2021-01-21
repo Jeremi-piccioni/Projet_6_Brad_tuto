@@ -4,12 +4,12 @@ const UserSchema = new mongoose.Schema({    // new commented as desespeted move
   
         email:{  
             type: String,
-            required: True
+            required: true
         },
 
         password:{  
             type: String,
-            required: True
+            required: true
         },
 
         date:{  

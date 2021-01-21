@@ -21,7 +21,7 @@ app.use(bodyParser.json())
 
 // Routes
 app.use('/', require('./routes/index'))
-app.use('/api/auth', require('./routes/users')) 
+app.use('/api/auth', require('./routes/users'))   // api/auth
 
 const PORT = process.env.PORT ||3000
 

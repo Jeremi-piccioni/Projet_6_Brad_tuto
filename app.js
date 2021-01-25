@@ -3,6 +3,10 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const app =express()
+const passport = require('passport')
+
+// Passport config
+require('./congif/passport')(passport)
 
 // Allow CORS policy
 app.use(cors())
@@ -18,6 +22,10 @@ mongoose.connect(db, { useNewUrlParser: true })
 // Bodyparser
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
+// Passport Middleware
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Routes
 app.use('/', require('./routes/index'))

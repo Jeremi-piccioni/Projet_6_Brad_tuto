@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const passport = require('passport')
 
 // User model
 const User = require('../models/User')   
@@ -71,4 +72,19 @@ if(errors.length > 0) {
 console.log('errors from array line 71:' + errors)
 })
 
+// Login Handle
+router.post('/login', (req,res,next) => {
+    passport.authenticate('local',{
+        successRedirect: '/dashboard', // <-- route with succesful authentification to be defined
+        failureRedirect: '/users/login' // <-- route with login failure /login ??
+        
+    }) (req,res,next)
+})
+
+// Logout Handle
+router.get('/logout', (req,res) =>{
+    req.logout()
+    //
+    res.redirect('/users/login')
+})
 module.exports = router

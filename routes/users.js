@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
 // User model
-const User = require('../models/User')   // This line crash the server... but why ??
+const User = require('../models/User')   
 
 // Login Page
 router.get('/signup', (req,res) => res.send('Login page'))  // api/auth
@@ -16,7 +17,7 @@ router.get('/login', (req,res) => res.send('Register page'))  // api/auth
 // Register Handle
 router.post('/signup', (req,res) => {    // api/auth
     const { email, password} = req.body
-    console.log(req.body)
+    console.log('req.body line 20: ' + req.body)
     let errors = []
 
 // Check required fields
@@ -30,12 +31,44 @@ if(password.length < 6){
 
 if(errors.length > 0) {
     console.log(errors)
-    req.send(errors)
-
+    res.send(errors) 
+    
 } else{
-    res.send('pass')
+// Validation passed
+    User.findOne( {email:email} )
+    .then(user => {
+        if(user) {
+            // User already exist
+            errors.push({message: 'This email already registered'})
+            res.send(errors)
+        }
+        else{
+            const newUser = new User({
+                email,
+                password
+
+            })
+            // Hash Password
+            bcrypt.genSalt(10, (err,salt) => 
+                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                    if(err) throw err
+                    // Set plain password to hashed password
+                    newUser.password = hash
+
+                    console.log('Pass in bcrypt')
+                    // Save user
+                    newUser.save()
+                    .then(user => {
+                        res.redirect('/login')
+                    })
+                    .catch(err => console.log(err))
+                }))
+        }
+    })
+   // .catch(err)
+  //  res.send('pass')
 }
-console.log(errors)
+console.log('errors from array line 71:' + errors)
 })
 
 module.exports = router

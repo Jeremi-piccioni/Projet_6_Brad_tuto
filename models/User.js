@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const UserSchema = new mongoose.Schema({    // new commented as desespeted move
+const UserSchema = new mongoose.Schema({    
   
         email:{  
             type: String,

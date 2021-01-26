@@ -2,15 +2,41 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const passport = require('passport')
 
 // User model
 const User = require('../models/User')   
 
+const jwt = require('jsonwebtoken');
+const passport = require('passport')
+const passportJWT = require("passport-jwt");
+
+const ExtractJwt = passportJWT.ExtractJwt;
+const JwtStrategy = passportJWT.Strategy;
+
+var jwtOptions = {}
+// jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = 'iloveraclette';
+
+var strategy = new JwtStrategy(jwtOptions, function(token, next) {
+  console.log('jwt token received', token);
+  // usually this would be a database call:
+//   var user = users[_.findIndex(users, {id: token.id})];
+  User.findOne({id: token.id})
+  .then( (user)=>{
+    next(null, user);
+  })
+  .catch((err)=>{
+    next(null, false);
+  })
+});
+
+passport.use(strategy);
+router.use(passport.initialize())
+
 // Login Page
 router.get('/signup', (req,res) => res.send('Login page'))  // api/auth
 
-module.exports = router
 
 // Register Page
 router.get('/login', (req,res) => res.send('Register page'))  // api/auth
@@ -60,7 +86,10 @@ if(errors.length > 0) {
                     // Save user
                     newUser.save()
                     .then(user => {
-                        res.redirect('/login')
+                        // res.redirect('/login')
+                        console.log("signup ok!")
+    
+                        res.json({message:"OK"})
                     })
                     .catch(err => console.log(err))
                 }))
@@ -73,18 +102,36 @@ console.log('errors from array line 71:' + errors)
 })
 
 // Login Handle
-router.post('/login', (req,res,next) => {
-    passport.authenticate('local',{
-        successRedirect: '/dashboard', // <-- route with succesful authentification to be defined
-        failureRedirect: '/users/login' // <-- route with login failure /login ??
+router.post('/login', async (req,res,next) => {
+    // passport.authenticate('local',{
+    //     successRedirect: '/dashboard', // <-- route with succesful authentification to be defined
+    //     // failureRedirect: '/users/login' // <-- route with login failure /login ??
+    //     failureRedirect: '/api/auth/login' // <-- route with login failure /login ??
         
-    }) (req,res,next)
+    // }) (req,res,next)
+    console.log("login...")
+    var user = await User.findOne({ email: req.body.email }).exec();
+    console.log("user",user)
+    if(!user) {
+        return res.status(400).send({ message: "The username does not exist" });
+    }
+    console.log("compare...")
+    if(!bcrypt.compareSync(req.body.password, user.password)) {
+        return res.status(400).send({ message: "The password is invalid" });
+    }
+    console.log("jwt...")
+    
+    var payload = {id: user.id};
+    var token = jwt.sign(payload, jwtOptions.secretOrKey);
+    res.json({message: "ok", token: token});
 })
 
 // Logout Handle
 router.get('/logout', (req,res) =>{
-    req.logout()
+    
+    // req.logout()
     //
-    res.redirect('/users/login')
+    // res.redirect('/users/login')
+    re.json({message:"logged out"})
 })
 module.exports = router
